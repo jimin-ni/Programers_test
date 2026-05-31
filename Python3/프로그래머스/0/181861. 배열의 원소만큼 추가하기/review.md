@@ -34,8 +34,16 @@ def solution(arr):
 ```
 
 #### **📝해설**
+리스트 컴프리헨션을 사용한 방법이다.  
+이중 for문 구조를 한 줄로 압축했다. 이중 for문을 풀어 쓰면 아래와 같다
 
-```js
+```python
+def solution(arr):
+    result = []
+    for a i arr:
+        for _ in range(a):
+             result.append(a)
+     return reult
 ```
 
 ### **🔖정리**
