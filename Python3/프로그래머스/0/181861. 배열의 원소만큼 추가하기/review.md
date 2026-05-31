@@ -41,7 +41,7 @@ arr에서 숫자 a를 하나씩 꺼내고, 그 숫자만큼 _ 를 반복한다. 
 ```python
 def solution(arr):
     result = []
-    for a i arr:
+    for a in arr:
         for _ in range(a):
              result.append(a)
      return reult
