@@ -1,0 +1,9 @@
+{
+  "name": "commit-to-discord",
+  "version": "1.0.0",
+  "description": "커밋 페이지를 캡처해 Discord 스레드로 전송하는 스크립트",
+  "private": true,
+  "dependencies": {
+    "puppeteer": "^23.0.0"
+  }
+}
