@@ -22,12 +22,18 @@ jobs:
         with:
           node-version: '20'
 
-      # 3) 의존성 설치 (Puppeteer + Chromium)
+      # 3) 한글 폰트 설치 (없으면 캡처 시 한글이 □로 깨집니다)
+      - name: Install Korean fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
+
+      # 4) 의존성 설치 (Puppeteer + Chromium)
       - name: Install dependencies
         working-directory: ./scripts
         run: npm install
 
-      # 4) 커밋 페이지 캡처 → Discord 전송
+      # 5) 커밋 페이지 캡처 → Discord 전송
       - name: Capture and notify
         working-directory: ./scripts
         env:
