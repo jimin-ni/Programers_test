@@ -1,0 +1,38 @@
+name: Commit to Discord
+
+# main 브랜치에 push가 일어날 때마다 실행됩니다.
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      # 1) 레포 체크아웃 (커밋 날짜를 git log에서 읽기 위해 history 포함)
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      # 2) Node.js 설정
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 3) 의존성 설치 (Puppeteer + Chromium)
+      - name: Install dependencies
+        working-directory: ./scripts
+        run: npm install
+
+      # 4) 커밋 페이지 캡처 → Discord 전송
+      - name: Capture and notify
+        working-directory: ./scripts
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          THREAD_ID: '1501235967657250816'   # '코테인증-김지민' 스레드 ID
+          REPO: ${{ github.repository }}      # jimin-ni/Programers_test
+          COMMIT_SHA: ${{ github.sha }}
+        run: node capture-and-notify.js
