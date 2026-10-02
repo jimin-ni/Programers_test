@@ -33,23 +33,32 @@ function getCommitMessage() {
   return `✅${yy}.${mm}.${dd}(${dow}) 커밋완료`;
 }
 
-// ── 2) 이 커밋이 올라온 폴더 경로 찾기 ──────────────────────────────
+// ── 2) 이번 커밋에서 변경된 .md 파일이 있는 폴더 찾기 ────────────────
 function getTargetDir() {
-  // 이번 커밋에서 추가/변경된 파일 목록
-  const files = execSync(`git show --pretty=format: --name-only ${COMMIT_SHA}`)
+  // core.quotepath=false → 한글 경로가 \355\224\204 같은 8진수로 깨지지 않고
+  // UTF-8 그대로 출력됩니다. (404의 원인이던 부분)
+  const files = execSync(
+    `git -c core.quotepath=false show --pretty=format: --name-only ${COMMIT_SHA}`
+  )
     .toString()
     .split('\n')
     .map((s) => s.trim())
+    // 경로가 따옴표로 감싸진 경우 제거
+    .map((s) => s.replace(/^"(.*)"$/, '$1'))
     .filter(Boolean);
 
-  // README.md가 있는 폴더를 우선 사용, 없으면 첫 변경 파일의 폴더
-  const target = files.find((f) => f.toLowerCase().endsWith('readme.md')) || files[0];
-  if (!target || !target.includes('/')) return ''; // 루트
+  // 변경된 .md 파일을 찾습니다 (README.md 우선 → 그 외 .md → 그래도 없으면 첫 파일)
+  const mdFiles = files.filter((f) => f.toLowerCase().endsWith('.md'));
+  const target =
+    mdFiles.find((f) => f.toLowerCase().endsWith('readme.md')) ||
+    mdFiles[0] ||
+    files[0];
 
+  if (!target || !target.includes('/')) return ''; // 루트에 있는 파일
   return target.split('/').slice(0, -1).join('/');
 }
 
-// ── 3) README 폴더 뷰 캡처 (height 고정) ────────────────────────────
+// ── 3) 해당 폴더의 README 뷰 캡처 (height 고정) ──────────────────────
 async function capture() {
   const dir = getTargetDir();
   // 경로 각 조각을 인코딩 (한글/공백/괄호 대응), '/' 는 유지
