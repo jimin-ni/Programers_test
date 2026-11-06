@@ -14,5 +14,6 @@ function solution(clothes) {
         answer *= (count +1)
     }
     
+    // 아무것도 안 입은 한 가지 경우 제외 
     return answer-1
 }
